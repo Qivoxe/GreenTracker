@@ -65,13 +65,15 @@ The result? People care about the planet but can't act because they don't know w
 
 No installation. No## 📸 Screenshots
 
+## 📸 Screenshots
+
 | Dashboard | Activity Tracking |
 |-----------|------------------|
-| ![](images/screenshot1.png) | ![](images/screenshot2.png) |
+| ![](Screenshot%20(49).png) | ![](Screenshot%20(50).png) |
 
 | Emissions Graph | Leaderboard |
 |-----------------|-------------|
-| ![](images/screenshot3.png) | ![](images/screenshot4.png) | sign-up email. No internet after first load. Works on any device with a browser.
+| ![](Screenshot%20(51).png) | ![](Screenshot%20(52).png) |
 
 ---
 
