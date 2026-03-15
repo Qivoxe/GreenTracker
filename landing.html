@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenTrack — Know Your Carbon</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: calc(100vh - 73px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+      position: relative;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 64px 80px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.1s ease forwards;
+    }
+
+    .hero-eyebrow span {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .hero-eyebrow-line {
+      width: 32px;
+      height: 1px;
+      background: var(--green);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s ease forwards;
+    }
+
+    .hero-title em {
+      color: var(--green);
+      font-style: italic;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--cream-dim);
+      max-width: 420px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.3s ease forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.4s ease forwards;
+    }
+
+    .hero-right {
+      border-left: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Animated planet ── */
+    .planet-wrap {
+      position: relative;
+      width: 320px;
+      height: 320px;
+    }
+
+    .planet-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      animation: spin-slow linear infinite;
+    }
+
+    .ring-1 {
+      inset: -40px;
+      animation-duration: 18s;
+      border-color: var(--green-dim);
+      opacity: 0.4;
+    }
+
+    .ring-2 {
+      inset: -80px;
+      animation-duration: 30s;
+      animation-direction: reverse;
+      opacity: 0.2;
+    }
+
+    .ring-3 {
+      inset: -120px;
+      animation-duration: 45s;
+      opacity: 0.1;
+    }
+
+    .planet-core {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 35% 30%, #2d5c35, #0d1a10);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 60px #6db87a22, inset 0 0 40px #00000055;
+      overflow: hidden;
+    }
+
+    .planet-surface {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    .planet-surface::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      width: 60%;
+      height: 30%;
+      background: var(--green-dim);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      filter: blur(8px);
+    }
+
+    .planet-surface::after {
+      content: '';
+      position: absolute;
+      bottom: 25%;
+      right: 15%;
+      width: 40%;
+      height: 25%;
+      background: #4a8a5a;
+      border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+      filter: blur(6px);
+    }
+
+    .planet-stat {
+      position: absolute;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: var(--cream-dim);
+      backdrop-filter: blur(8px);
+    }
+
+    .planet-stat strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .ps-1 {
+      top: 10%;
+      right: -10%;
+      animation: float1 4s ease-in-out infinite;
+    }
+
+    .ps-2 {
+      bottom: 15%;
+      left: -15%;
+      animation: float2 5s ease-in-out infinite;
+    }
+
+    .ps-3 {
+      top: 50%;
+      right: -20%;
+      animation: float1 6s ease-in-out infinite;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    @keyframes float2 {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-cell {
+      padding: 40px 48px;
+      border-right: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-cell:nth-child(1) { animation-delay: 0.5s; }
+    .stat-cell:nth-child(2) { animation-delay: 0.6s; }
+    .stat-cell:nth-child(3) { animation-delay: 0.7s; }
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-num .accent { color: var(--green); }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--cream-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Features ── */
+    .features {
+      padding: 96px 80px;
+    }
+
+    .features-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 64px;
+    }
+
+    .features-title {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      color: var(--white);
+      line-height: 1.15;
+    }
+
+    .features-desc {
+      color: var(--cream-dim);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      align-self: end;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .feat-card {
+      background: var(--bg);
+      padding: 36px 28px;
+      transition: background var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--green-glow) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .feat-card:hover { background: var(--bg2); }
+    .feat-card:hover::before { opacity: 1; }
+
+    .feat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feat-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .feat-desc {
+      font-size: 0.83rem;
+      color: var(--cream-dim);
+      line-height: 1.7;
+    }
+
+    /* ── How it works ── */
+    .how {
+      padding: 96px 80px;
+      border-top: 1px solid var(--border);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 48px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+    }
+
+    .step {
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      background: var(--bg2);
+      border: 1px solid var(--green-dim);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--green);
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--cream-dim);
+      line-height: 1.6;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      margin: 0 80px 96px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 80px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--white);
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .cta-sub {
+      color: var(--cream-dim);
+      margin-bottom: 36px;
+      font-size: 1rem;
+      position: relative;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 60px 24px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
+      .features { padding: 60px 24px; }
+      .features-header { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .how { padding: 60px 24px; }
+      .steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .steps::before { display: none; }
+      .cta-section { margin: 0 24px 60px; padding: 48px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <span class="dot"></span>
+      GreenTrack
+    </div>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="login.html" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">
+        Get Started →
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span>Carbon Intelligence</span>
+      </div>
+      <h1 class="hero-title">
+        Track your<br>
+        <em>footprint</em><br>
+        not your steps.
+      </h1>
+      <p class="hero-desc">
+        GreenTrack helps you measure and understand your daily carbon emissions through travel, electricity, and food — privately, offline, and beautifully.
+      </p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary">Start Tracking</a>
+        <a href="#how" class="btn btn-ghost">How it works</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="planet-wrap">
+        <div class="planet-ring ring-1"></div>
+        <div class="planet-ring ring-2"></div>
+        <div class="planet-ring ring-3"></div>
+        <div class="planet-core">
+          <div class="planet-surface"></div>
+        </div>
+        <div class="planet-stat ps-1">
+          <strong>4.7<span style="color:var(--green);font-size:1rem">t</span></strong>
+          avg daily CO₂
+        </div>
+        <div class="planet-stat ps-2">
+          <strong style="color:var(--green)">−23%</strong>
+          avg reduction
+        </div>
+        <div class="planet-stat ps-3">
+          <strong>142</strong>
+          entries logged
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats row ── -->
+  <div class="stats-row">
+    <div class="stat-cell">
+      <div class="stat-num">36<span class="accent">bn</span></div>
+      <div class="stat-label">Tonnes CO₂ emitted globally per year</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">4<span class="accent">t</span></div>
+      <div class="stat-label">Personal annual budget for 1.5°C target</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">100<span class="accent">%</span></div>
+      <div class="stat-label">Private — all data stays on your device</div>
+    </div>
+  </div>
+
+  <!-- ── Features ── -->
+  <section class="features" id="features">
+    <div class="features-header">
+      <h2 class="features-title">
+        Everything you need to reduce your impact.
+      </h2>
+      <p class="features-desc">
+        No sign-up. No server. No tracking. Built for people who want clarity, not clutter — your data lives in your browser and nowhere else.
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <span class="feat-icon">📊</span>
+        <div class="feat-title">CO₂ Trend Graph</div>
+        <p class="feat-desc">Animated line chart showing your emissions over time with daily breakdowns.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🌿</span>
+        <div class="feat-title">Smart Calculator</div>
+        <p class="feat-desc">Log travel, electricity, and food. Get instant CO₂ estimates using proven formulas.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🏆</span>
+        <div class="feat-title">Leaderboard</div>
+        <p class="feat-desc">Compare users by lowest emissions. Compete to cut your carbon, not raise it.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🎯</span>
+        <div class="feat-title">Goal Tracker</div>
+        <p class="feat-desc">Set weekly targets and track progress visually with animated goal rings.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🕶️</span>
+        <div class="feat-title">Dark Mode First</div>
+        <p class="feat-desc">Designed for dark mode from the ground up. Easy on the eyes, kind on the planet.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📱</span>
+        <div class="feat-title">Offline Ready</div>
+        <p class="feat-desc">No internet needed after first load. All data stored securely in localStorage.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📁</span>
+        <div class="feat-title">Export CSV</div>
+        <p class="feat-desc">Download all your emission logs as a CSV file for your own analysis anytime.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔒</span>
+        <div class="feat-title">100% Private</div>
+        <p class="feat-desc">No cookies. No analytics. No backend. Your data belongs to you, always.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ── -->
+  <section class="how" id="how">
+    <div class="section-title">How it works</div>
+    <div class="section-sub">Four steps from zero to carbon-aware</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Create Profile</div>
+        <p class="step-desc">Enter a username — no email, no password complexity required.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Log Activities</div>
+        <p class="step-desc">Record travel km, electricity units, and number of meals each day.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">See Your Data</div>
+        <p class="step-desc">Watch your CO₂ graph update live. Review history. Spot trends.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Set & Hit Goals</div>
+        <p class="step-desc">Set weekly targets. Compete on the leaderboard. Reduce over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <h2 class="cta-title">Know your number.</h2>
+    <p class="cta-sub">Take 60 seconds to log today's activities and see where you stand.</p>
+    <a href="login.html" class="btn btn-primary" style="font-size:1rem;padding:14px 36px;">
+      Start for free →
+    </a>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer style="border-top: 1px solid var(--border); padding: 32px 80px; display: flex; justify-content: space-between; align-items: center;">
+    <div class="nav-logo" style="font-size:1rem;">
+      <span class="dot"></span> GreenTrack
+    </div>
+    <div style="font-size:0.8rem; color:var(--cream-dim);">
+      Privacy-first · Offline-ready · Open source spirit
+    </div>
+  </footer>
+</body>
+</html>
