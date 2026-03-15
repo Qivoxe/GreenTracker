@@ -63,15 +63,15 @@ The result? People care about the planet but can't act because they don't know w
 4. **Compete** on a local leaderboard ranked by lowest emissions
 5. **Set goals** and track streaks toward a personal carbon target
 
-No installation. No sign-up email. No internet after first load. Works on any device with a browser.
+No installation. No## 📸 Screenshots
 
-"C:\Users\Dell\OneDrive\Pictures\Screenshots\Screenshot (49).png"
+| Dashboard | Activity Tracking |
+|-----------|------------------|
+| ![](images/screenshot1.png) | ![](images/screenshot2.png) |
 
-"C:\Users\Dell\OneDrive\Pictures\Screenshots\Screenshot (50).png"
-
-"C:\Users\Dell\OneDrive\Pictures\Screenshots\Screenshot (51).png"
-
-"C:\Users\Dell\OneDrive\Pictures\Screenshots\Screenshot (52).png"
+| Emissions Graph | Leaderboard |
+|-----------------|-------------|
+| ![](images/screenshot3.png) | ![](images/screenshot4.png) | sign-up email. No internet after first load. Works on any device with a browser.
 
 ---
 
